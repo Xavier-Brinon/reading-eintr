@@ -1,0 +1,12 @@
+#+title: EINTR
+#+date: [2025-03-22 Sat]
+#+description: Elisp Introduction
+#+startup: indent
+# #+property: header-args :results output
+
+* number-or-marker-p
+*marker* is the location of the cursor in a buffer. It's a number
+because it records the position by the number of characters from the
+beginning of the buffer.
+*p* stands for *predicate*. Ending the variable name with the type is
+an old way of declaring the type 🤷🏻.

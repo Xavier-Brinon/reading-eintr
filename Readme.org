@@ -1,13 +1,22 @@
 #+title: EINTR
-#+date: [2024-11-23 Sat]
+#+date: [2025-03-22 Sat]
 #+description: Elisp Introduction
 #+startup: indent
+#+auto_tangle: t
 # #+property: header-args :results output
+
+* Org mode
+- tangle :: ~org-babel-tangle~, ~C-c C-v C-t~
+
+* Scratch mode
+~C-x C-e~ evaluates an expression, display in the echo area. ~C-u C-x
+C-e~ evaluates but display directly  in the buffer at mark.
 
 * Prep
 I'm going to use a file *test.el* to run all the examples.
 #+name: prep
 #+begin_src emacs-lisp :tangle test.el
+  ;;; -*- lexical-binding: t -*-
   ;;; package --- test file
 
   ;;; Commentary:
@@ -35,11 +44,11 @@ The *quote* ='= is to not interpret the list but to treat it /as-is/.
 If there is no quote, the list gets evaluated.
 #+name: list evaluation
 #+begin_src emacs-lisp :tangle test.el
-  (+ 2 2)
+  (+ 2 3)
 #+end_src
 
 #+RESULTS: list evaluation
-: 4
+: 5
 
 * 1.2 Program = Evaluating a list
 The evaluation will do one of three things:
@@ -50,8 +59,8 @@ The evaluation will do one of three things:
 ~C-x C-e~ :: call the evaluation of the expression
 
 ** Evaluating inner lists
-Inner expressions are evaluated first. The value they return are used by the
-outer expressions.
+Inner expressions are evaluated first. The value they return are used
+by the outer expressions.
 
 #+name: Inner loop evaluation
 #+begin_src emacs-lisp :tangle test.el
@@ -62,8 +71,8 @@ outer expressions.
 : 12
 
 * 1.7 Variables
-Example of a variable using Emacs ~fill-column~. Evaluating / Executing gives
-the value *bound* to that variable.
+Example of a variable using Emacs ~fill-column~. Evaluating /
+Executing gives the value *bound* to that variable.
 
 #+name: fill-column
 #+begin_src emacs-lisp
@@ -73,23 +82,23 @@ the value *bound* to that variable.
 #+RESULTS: fill-column
 : 70
 
-Variables and functions are treated differently. To evaluate a function, you put
-it as first member of a list: ~(foo ...)~.
+Variables and functions are treated differently. To evaluate a
+function, you put it as first member of a list: ~(foo ...)~.
 Evaluating foo by itself will only trigger an error: ~foo~
 
-Evaluating of variables are the opposite. As firts element of a list, it will
-throw an error: ~(fill-column ...)~
+Evaluating of variables are the opposite. As firts element of a list,
+it will throw an error: ~(fill-column ...)~
 
 * Message
 ~message~ is sending the content of its arguments to the buffer area
 
 #+name: message
 #+begin_src emacs-lisp
-  (message "This message appears in the echo area!")
+  (message "This message appears in the echo area")
 #+end_src
 
 #+RESULTS: message
-: This message appears in the echo area!
+: This message appears in the echo area
 
 =%s= is a string formatter
 #+name: message-with-%s
@@ -109,8 +118,72 @@ For numbers, use =%d=
 #+RESULTS: message-with-%d
 : The value of fill-column is 70
 
-Actually, you can use ‘%s’ to print a number.  It is non-specific.  ‘%d’ prints
-only the part of a number left of a decimal point, and not anything that is not
-a number.
+Actually, you can use ‘%s’ to print a number. It is non-specific. ‘%d’
+prints only the part of a number left of a decimal point, and not
+anything that is not a number.
 
-** 1.9 Setting values
+* Setting values
+** setq
+You *bind* a /value/ to a /name/ via =setq=.
+Said another way, the /name/ is pointing to the /value/.
+#+name: using setq
+#+begin_src elisp :tangle test.el
+  (setq flowers
+        '(rose violets daisy buttercup))
+  ;; 'flowers evaluate to flowers
+  ;; flowers evaluate to the list 👆🏻
+  flowers
+#+end_src
+
+#+RESULTS: using setq
+| rose | violets | daisy | buttercup |
+
+** multiple assignement
+You can create multiple assignements using one *setq* expression.
+#+name: mulitple assign
+#+begin_src elisp :tangle test.el
+  (setq trees '(pine fir oak maple)
+        herbivores '(gazelle antelope zebra)
+        carnivores '(lion tiger leopard))
+#+end_src
+
+#+RESULTS: mulitple assign
+| lion | tiger | leopard |
+
+** counter
+
+#+name: incrementer
+#+begin_src elisp
+  (setq counter 0)                        ; Initialisation
+  (setq counter (+ 1 counter))            ; Increment
+  counter                                 ; Value of the counter
+#+end_src
+
+#+RESULTS: incrementer
+: 1
+
+* Buffers
+#+begin_src elisp
+  (buffer-name)"Readme.org"                         ; name of the buffer
+  (buffer-file-name)"/reading-eintr/Readme.org"     ; name of the file attached to the buffer
+  (current-buffer)#<buffer Readme.org>              ; buffer itself
+  (other-buffer)#<buffer *scratch*>                 ; most recently selected, /non-visible/ buffer
+  (switch-to-buffer (other-buffer))#<buffer *scratch*>
+  (buffer-size)4749                       ; number of chars in the current buffer
+  (point)4402                             ; location of the cursor
+  (point-min)1                            ; minimum permissible position in the current buffer
+  (point-max)4992                         ; max perimissible position
+#+end_src
+
+~switch-to-buffer~ makes the buffer visible and select it, while
+~set-buffer~ only select it. Most of the time, you might want to work
+on a buffer but without the need to make it visible. Most of the time
+you will want to use ~set-buffer~.
+
+* ends
+#+name: end of file
+#+description: el files need to end with this footer
+#+begin_src emacs-lisp :tangle test.el
+  (provide 'test)
+  ;;; test.el ends here
+#+end_src
