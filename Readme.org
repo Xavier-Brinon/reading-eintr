@@ -163,7 +163,7 @@ You can create multiple assignements using one *setq* expression.
 : 1
 
 * Buffers
-#+begin_src elisp
+#+begin_src elisp :tangle test.el
   (buffer-name)"Readme.org"                         ; name of the buffer
   (buffer-file-name)"/reading-eintr/Readme.org"     ; name of the file attached to the buffer
   (current-buffer)#<buffer Readme.org>              ; buffer itself
@@ -179,6 +179,48 @@ You can create multiple assignements using one *setq* expression.
 ~set-buffer~ only select it. Most of the time, you might want to work
 on a buffer but without the need to make it visible. Most of the time
 you will want to use ~set-buffer~.
+
+* Defun
+The template of a function definition is:
+#+begin_src elisp
+  (defun FUNCTION-NAME (ARGUMENTS...)
+    "OPTIONAL-DOCUMENTATION..."         ; Displayed text with C-h f (describe function)
+    (interactive ARGUMENT-PASSING-INFO) ; optional, called using M-x ...
+    BODY...)
+#+end_src
+
+For example
+#+name: multiply by 7
+#+begin_src elisp :tangle test.el
+  ;; Typical function definition
+  (defun multiply-by-seven (number)
+    "Multiply the given NUMBER by 7."
+    (* 7 number))
+  (multiply-by-seven 1)
+#+end_src
+
+#+RESULTS: multiply by 7
+: 7
+
+** Interactive
+An interactive function, means you can call it via ~M-x~.
+To make the function above interactive:
+#+name: multiply by 7 interactive
+#+begin_src elisp :tangle test.el
+  ;; Typical function definition
+  (defun multiply-by-seven (number)
+    "Multiply the given NUMBER by 7."
+    (interactive "p")                     ; p means pass the prefix as argument
+    (message "%d times 7 is %d" number (* 7 number)))
+#+end_src
+
+#+RESULTS: multiply by 7 interactive
+: multiply-by-seven
+
+The function returns a message because we want to see the result in
+the echo area.
+~M-1 M-x multiply-by-seven~ sends 1 as argument to the function,
+or ~C-u 1 M-x multiply-by-seven~.
 
 * ends
 #+name: end of file
